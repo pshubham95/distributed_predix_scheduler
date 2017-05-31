@@ -34,9 +34,9 @@ if(! process.env.hasOwnProperty('VCAP_SERVICES'))
 {
     connectionDetails = {
         pkg: 'ioredis',
-        host: '127.0.0.1',
-        password: null,
-        port: 6379,
+        host: config.conn_details.host,
+        password: config.conn_details.password,
+        port: config.conn_details.port,
     };
 }
 

@@ -1,24 +1,5 @@
 var redis_service_name = 'your_redis_service_instance_name'; //SPECIFY THE REDIS SERVICE INSTANCE NAME CREATED ON PREDIX
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Cron is a time-based job scheduler                                                          //
-// SOME CRON STRING EXAMPLES:                                                                  // 
-//                                                                                             //
-// *    *    *    *    *    *                                                                  // 
-// ┬    ┬    ┬    ┬    ┬    ┬                                                                  // 
-// │    │    │    │    │    |                                                                  // 
-// │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)                              // 
-// │    │    │    │    └───── month (1 - 12)                                                   // 
-// │    │    │    └────────── day of month (1 - 31)                                            // 
-// │    │    └─────────────── hour (0 - 23)                                                    // 
-// │    └──────────────────── minute (0 - 59)                                                  // 
-// └───────────────────────── second (0 - 59, OPTIONAL)                                        // 
-//                                                                                             // 
-// 1. 42 * * * * - Execute a cron job when the minute is 42 (e.g. 19:42, 20:42, etc.).         // 
-// 2. Execute a cron job every 5 Minutes = */5 * * * *                                         // 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 ////////////////////////
 //OPTIONS             //
 ///////////////////////
@@ -36,6 +17,17 @@ logs:
 Print detailed logs. Specify true to enable, false to disable.
 */
 
+
+//////////////////////////////
+//LOCAL REDIS CONFIGURATIONS//
+/////////////////////////////
+//This will be ignored when pushed to predix
+
+var conn_details = {
+    password: null,
+    port: 6379,
+    host:'127.0.0.1'
+}
 module.exports.redis_service_name = redis_service_name;
-module.exports.cron_string = cron_string;
 module.exports.options = options;
+module.exports.conn_details = conn_details;
