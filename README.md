@@ -6,8 +6,11 @@ Distributed across multiple app instances in Predix.
 ### Get the source code
 Make a directory for your project.  Clone or download and extract the seed in that directory.
 ```
-git clone https://github.build.ge.com/212576700/distributed_predix_scheduler  
-cd distributed_predix_scheduler
+> git clone https://github.build.ge.com/212576700/distributed_predix_scheduler  
+```
+
+```
+> cd distributed_predix_scheduler
 ```
 
 
