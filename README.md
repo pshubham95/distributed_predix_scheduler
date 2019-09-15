@@ -4,9 +4,8 @@ Distributed across multiple app instances in Predix.
 ## Getting Started
 
 ### Get the source code
-Make a directory for your project.  Clone or download and extract the seed in that directory.
+Make a directory for your project.  Clone or download and extract  in that directory.
 ```
-> git clone https://github.build.ge.com/212576700/distributed_predix_scheduler  
 ```
 
 ```
@@ -64,7 +63,7 @@ https://github.com/MSOpenTech/redis
 4. Examples of jobs and queue array have been provided in the jobs.js file as commented code.
 
 
-#### 3. Pushing to Predix
+#### 3. Pushing to Predix (Ignore for other platforms which are not cloudfoundry)
 
 * Create a redis service instance on Predix.
     * Login to predix
@@ -105,9 +104,9 @@ https://github.com/MSOpenTech/redis
   - <your_service_name>
         ````
         
-        * Open config.js in the text editor and replace the redis service instance name.
+        * Open config.js in the text editor and specify the connection details.
         ````
-        var redis_service_name = 'your_redis_service_instance_name';
+            const conn_details = {...}
         ````
         
         * Push the application to predix

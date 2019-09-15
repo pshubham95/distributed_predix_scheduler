@@ -2,82 +2,37 @@
 // Load the required Packages //
 // ////////////////////////////
 
-var NR = require('node-resque');
-var schedule = require('node-schedule');
-var express = require('express');
-var app = express();
+const NR = require('node-resque');
+const schedule = require('node-schedule');
+const express = require('express');
+const app = express();
 
 
 // /////////////////////////////
 // Load Config                //
 // ////////////////////////////
 
-var config = require('./config');
-var redis_serv_name = config.redis_service_name;
+const config = require('./config');
 
 
 
 /////////////////////////////////
 //Load Jobs                    //
 ////////////////////////////////
-var jobs = require('./jobs');
-var queues = jobs.queues;
-var jobs_file = jobs.jobs;
+const queues = require('./jobs').queues;
+const jobs_file = require('./jobs').jobs;
 
 // ////////////////////////////
 // Establish redis db conn   //
 // ///////////////////////////
-var connectionDetails = {};
 
+const connectionDetails = {
+    pkg: 'ioredis',
+    host: config.conn_details.host,
+    password: config.conn_details.password,
+    port: config.conn_details.port,
+};
 
-if(! process.env.hasOwnProperty('VCAP_SERVICES'))
-{
-    connectionDetails = {
-        pkg: 'ioredis',
-        host: config.conn_details.host,
-        password: config.conn_details.password,
-        port: config.conn_details.port,
-    };
-}
-
-else
-{
-    var services = process.env.VCAP_SERVICES;
-    services = JSON.parse(services);
-    var keys = Object.keys(services);
-    if(keys.length == 0){
-        console.log('redis service not bound to this app');
-        exit(1);
-    }
-    else
-    {
-        var index = 0;
-        for(var i = 0; i < keys.length; i++)
-        {
-            if(keys[i].indexOf('redis')!== -1)
-            {
-                index = i;
-                break;
-            }
-        }
-
-        for(var i = 0; i < services[keys[index]].length; i++)
-        {
-            if(services[keys[index]][i].name == redis_serv_name)
-            {
-                connectionDetails =  {
-                    pkg: 'ioredis',
-                    host: services[keys[index]][i].credentials.host,
-                    password: services[keys[index]][i].credentials.password,
-                    port:services[keys[index]][i].credentials.port,
-                    options: {password: services[keys[index]][i].credentials.password}
-                };
-                break;
-            }
-        }
-
-    }
-}
 
 // ////////////////////////////
 // DEFINE YOUR WORKER TASKS //
@@ -89,19 +44,19 @@ else
         callback(null, true);
     }
 }*/
-var jobs = {};
-for(let i = 0; i < jobs_file.length; i++)
-{
-    jobs[jobs_file[i].job_name] = jobs_file[i].job_func;
-}
+const jobs = {};
+jobs_file.forEach(e => {
+    jobs[e.job_name] = e.job_func;
+})
+
 
 // //////////////////
 // START A WORKER //
 // //////////////////
-
+let worker;
 if(config.options.multiWorker)
 {
-    var worker = new NR.multiWorker({
+    worker = new NR.multiWorker({
         connection: connectionDetails,
         queues: queues,
         minTaskProcessors:   1,
@@ -115,8 +70,7 @@ if(config.options.multiWorker)
 }
 else
 {
-    var Worker = NR.worker;
-    var worker = new Worker({connection: connectionDetails, queues: queues}, jobs)
+    worker = new NR.worker({connection: connectionDetails, queues: queues}, jobs)
     worker.connect(function () {
         worker.workerCleanup() // optional: cleanup any previous improperly shutdown workers on this host
         worker.start()
@@ -127,8 +81,7 @@ else
 // START A SCHEDULER //
 // /////////////////////
 
-var Scheduler = NR.scheduler
-var scheduler = new Scheduler({connection: connectionDetails})
+const scheduler = new NR.scheduler({connection: connectionDetails})
 scheduler.connect(function () {
     scheduler.start()
 })
@@ -162,7 +115,7 @@ if(config.options.logs)
 
 function schedule_jobs(cntr)
 {
-    schedule.scheduleJob(jobs_file[cntr].cron_string, function () { // do this job every 10 seconds, cron style
+    schedule.scheduleJob(jobs_file[cntr].cron_string, () => {
         // we want to ensure that only one instance of this job is scheduled in our enviornment at once,
         // no matter how many schedulers we have running
         if (scheduler.master) {
@@ -172,7 +125,6 @@ function schedule_jobs(cntr)
 
             }
 
-            console.log(jobs_file[cntr].queue,cntr);
             queue.enqueue(jobs_file[cntr].queue, jobs_file[cntr].job_name, new Date().toString())
         }
     })
@@ -181,23 +133,23 @@ function schedule_jobs(cntr)
 // DEFINE JOBS //
 // ///////////////
 
-var Queue = NR.queue
-var queue = new Queue({connection: connectionDetails}, jobs)
+const queue = new NR.queue({connection: connectionDetails}, jobs)
 queue.on('error', function (error) { console.log(error) })
-queue.connect(function () {
-    for(var  i = 0; i < jobs_file.length;i++)
+queue.connect(() => {
+    jobs_file.map((_, i) => schedule_jobs(i))
+    /* for(var  i = 0; i < jobs_file.length;i++)
     {
         console.log('queue loop',i);
         schedule_jobs(i);
         
-    }
+    } */
 })
 
 // ////////////////////
 // SHUTDOWN HELPERS //
 // ////////////////////
 
-var shutdown = function () {
+const shutdown = function () {
     scheduler.end(function () {
         worker.end(function () {
             console.log('exiting')
@@ -207,7 +159,7 @@ var shutdown = function () {
 }
 
 function normalizePort(val) {
-    var port = parseInt(val, 10);
+    const port = parseInt(val, 10);
 
     if (isNaN(port)) {
         // named pipe
@@ -222,7 +174,7 @@ function normalizePort(val) {
     return false;
 }
 
-var port = normalizePort(process.env.PORT || process.env.VCAP_APP_PORT || '2805');
+const port = normalizePort(process.env.PORT || process.env.VCAP_APP_PORT || '2805');
 
 app.listen(port, function () {
     console.log('Starting on '+port)

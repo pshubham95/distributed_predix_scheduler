@@ -1,28 +1,29 @@
-/*var jobs = [
+const jobs = [
 
     {
         job_name:'ticktock',
         job_func:function(args,callback){
-            console.log('*** THE TIME IS ' + new Date().toDateString() + ' ***')
+            console.log('*** THE TIME IS ' + new Date().toLocaleString() + ' ***')
             callback(null, true);
         },
         queue: 'time',
-        cron_string:'0,10,20,30,40,50 * * * * *'
+        cron_string:'*/1 * * * *'
     },
     {
         job_name:'ticktock_diff',
         job_func:function(args,callback){
-            console.log('*** THE TIME FROM JOB ticktock_diff is ' + new Date().toDateString() + ' ***')
+            console.log('*** THE TIME FROM JOB ticktock_diff is ' + new Date().toLocaleString() + ' ***')
             callback(null, true);
         },
         queue: 'time_new',
         cron_string:'0,10,20,30,40,50 * * * * *'
     }
-];*/
-var jobs = [];
+];
+//const jobs = [];
 
-//var queues = ['time','time_new'];
-var queues = [];
+const queues = ['time','time_new'];
+//const queues = [];
+
 module.exports.jobs = jobs;
 module.exports.queues = queues;
 

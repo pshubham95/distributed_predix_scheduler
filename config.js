@@ -1,11 +1,10 @@
-var redis_service_name = 'your_redis_service_instance_name'; //SPECIFY THE REDIS SERVICE INSTANCE NAME CREATED ON PREDIX
 
 ////////////////////////
 //OPTIONS             //
 ///////////////////////
-var options = {
-    multiWorker:false, 
-    logs:true
+const options = {
+    multiWorker: false, 
+    logs: false
 }
 /*
 multiWorker:
@@ -19,15 +18,13 @@ Print detailed logs. Specify true to enable, false to disable.
 
 
 //////////////////////////////
-//LOCAL REDIS CONFIGURATIONS//
+// REDIS CONFIGURATIONS     //
 /////////////////////////////
-//This will be ignored when pushed to predix
 
-var conn_details = {
+const conn_details = {
     password: null,
     port: 6379,
     host:'127.0.0.1'
 }
-module.exports.redis_service_name = redis_service_name;
 module.exports.options = options;
 module.exports.conn_details = conn_details;
