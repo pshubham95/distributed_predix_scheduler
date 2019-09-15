@@ -5,8 +5,7 @@ Distributed across multiple app instances in Predix.
 
 ### Get the source code
 Make a directory for your project.  Clone or download and extract  in that directory.
-```
-```
+
 
 ```
 > cd distributed_predix_scheduler
